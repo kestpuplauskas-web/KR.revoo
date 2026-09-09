@@ -92,8 +92,11 @@ export function LeasesYearGantt({
   const navigate = useNavigate();
   const [selected, setSelected] = useState<CalendarLease | null>(null);
 
+  // Intl "short" months are numeric in Lithuanian ("01"), so LT gets readable
+  // abbreviations; every other language uses Intl.
   const monthLabels = useMemo(() => {
-    const fmt = new Intl.DateTimeFormat(i18n.language === "en" ? "en" : "lt", { month: "short" });
+    if (i18n.language.startsWith("lt")) return LT_MONTH_SHORT;
+    const fmt = new Intl.DateTimeFormat(i18n.language, { month: "short" });
     return Array.from({ length: MONTHS }, (_, i) => fmt.format(new Date(year, i, 1)));
   }, [i18n.language, year]);
 
