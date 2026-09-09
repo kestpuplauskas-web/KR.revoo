@@ -1622,5 +1622,25 @@
     "uploadFailed": "Photo upload failed",
     "back": "Back",
     "upcoming": "Upcoming charges"
+  },
+  "assistant": {
+    "title": "Revoo assistant",
+    "subtitle": "Explains where and how to do something. You make the changes yourself.",
+    "open": "Open assistant",
+    "clear": "Clear conversation",
+    "cleared": "Conversation cleared.",
+    "send": "Send",
+    "placeholder": "Ask how to do something…",
+    "intro": "Hi! 👋 I'm Eva, the Revoo assistant. I can explain how to do things in this system and help you find the information you need. How can I help?",
+    "suggestions": [
+      "What is our current occupancy and is it normal?",
+      "Which leases expire in the next 60 days?",
+      "How much debt is outstanding and how do I reduce it?",
+      "How do I change unit photos on the public site?"
+    ],
+    "disclaimer": "The assistant only advises – it never changes settings.",
+    "error": "Could not get a reply. Please try again.",
+    "empty": "No reply received – try rephrasing the question.",
+    "tooLong": "Message too long (max {{max}} characters)."
   }
 }

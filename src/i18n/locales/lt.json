@@ -1623,5 +1623,25 @@
     "uploadFailed": "Nepavyko įkelti nuotraukos",
     "back": "Atgal",
     "upcoming": "Būsimi priskaitymai"
+  },
+  "assistant": {
+    "title": "Revoo Asistentė",
+    "subtitle": "Paaiškina, kur ir kaip ką padaryti. Keičiate patys.",
+    "open": "Atidaryti pagalbininką",
+    "clear": "Išvalyti pokalbį",
+    "cleared": "Pokalbis išvalytas.",
+    "send": "Siųsti",
+    "placeholder": "Paklauskite, kaip ką nors padaryti…",
+    "intro": "Sveiki! 👋 Esu Eva – virtuali Revoo asistentė. Galiu atsakyti į klausimus, paaiškinti, kaip atlikti užduotis šioje sistemoje ir padėti rasti reikiamą informaciją. Kuo galiu padėti?",
+    "suggestions": [
+      "Koks šiuo metu portfelio užimtumas ir ar jis normalus?",
+      "Kurios nuomos sutartys baigiasi per artimiausius 60 dienų?",
+      "Kiek yra skolos ir ką daryti, kad ji mažėtų?",
+      "Kaip pakeisti vieneto nuotraukas viešoje svetainėje?"
+    ],
+    "disclaimer": "Asistentė tik pataria – nustatymų nekeičia.",
+    "error": "Nepavyko gauti atsakymo. Pabandykite dar kartą.",
+    "empty": "Atsakymo negavau – pabandykite performuluoti klausimą.",
+    "tooLong": "Žinutė per ilga (iki {{max}} simbolių)."
   }
 }
