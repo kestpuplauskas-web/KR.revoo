@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { NumberInput } from "@/components/NumberInput";
 import { ImageUploader } from "@/components/admin/ImageUploader";
-import { listBuildings, saveUnit } from "@/lib/units.functions";
+import { saveUnit } from "@/lib/units.functions";
 import { UNIT_STATUSES, type UnitStatus } from "@/lib/rental";
 
 export type UnitDraft = {
