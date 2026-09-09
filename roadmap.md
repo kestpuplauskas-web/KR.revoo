@@ -44,3 +44,7 @@
 - [x] Step 8 — tariffs, charges, invoices per lease, payments, one shared balance calc (done, verified with live fixtures)
 - Step 10 lease/reading/payment notification jobs (runScheduledNotifications is a stub)
 - [x] Step 9 — lease contracts: template variables, PDF, save to lease, drop signed_contracts, kind CHECK
+
+## Nuomos kalendorius (metinis vaizdas)
+- [x] `/admin/calendar`: metų Gantt pagal mėnesius (LeasesYearGantt), filtrai, legenda, sutarties langas
+- [x] Meniu nuoroda + lt/en tekstai; be migracijų, be vilkimo (sutarties datos tik per įspėjimą/pratęsimą/nutraukimą)
