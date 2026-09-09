@@ -57,6 +57,10 @@ const STATUS_BAR: Record<string, string> = {
 
 const MONTHS = 12;
 
+const LT_MONTH_SHORT = [
+  "sau", "vas", "kov", "bal", "geg", "bir", "lie", "rgp", "rgs", "spa", "lap", "gru",
+];
+
 function daysInMonth(year: number, monthIndex: number) {
   return new Date(year, monthIndex + 1, 0).getDate();
 }
