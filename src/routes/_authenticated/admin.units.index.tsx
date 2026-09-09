@@ -276,10 +276,6 @@ function UnitsPage() {
                   </div>
                 </td>
                 <td className="p-2">
-                  {u.building_name ?? "—"}
-                  <div className="text-xs text-muted-foreground">{u.city}</div>
-                </td>
-                <td className="p-2">
                   {u.room_count}
                   {u.area_m2 ? ` · ${u.area_m2} m²` : ""}
                 </td>
