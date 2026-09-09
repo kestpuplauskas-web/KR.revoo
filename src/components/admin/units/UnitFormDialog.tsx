@@ -126,23 +126,6 @@ export function UnitFormDialog({
           </div>
 
           <div>
-            <Label htmlFor="u-building">{t("rental.units.fBuilding")}</Label>
-            <select
-              id="u-building"
-              value={form.building_id ?? ""}
-              onChange={(e) => set("building_id", e.target.value || null)}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            >
-              <option value="">{t("rental.units.noBuilding")}</option>
-              {buildings.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
             <Label htmlFor="u-status">{t("rental.units.fStatus")}</Label>
             {/* Status is always a fixed list — it mirrors the database constraint. */}
             <select
