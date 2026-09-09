@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { NumberInput } from "@/components/NumberInput";
 import { ImageUploader } from "@/components/admin/ImageUploader";
-import { listBuildings, saveUnit } from "@/lib/units.functions";
+import { saveUnit } from "@/lib/units.functions";
 import { UNIT_STATUSES, type UnitStatus } from "@/lib/rental";
 
 export type UnitDraft = {
@@ -84,11 +84,6 @@ export function UnitFormDialog({
   const [form, setForm] = useState<UnitDraft>(initial);
   useEffect(() => setForm(initial), [initial, open]);
 
-  const fetchBuildings = useServerFn(listBuildings);
-  const { data: buildings = [] } = useQuery({
-    queryKey: ["buildings"],
-    queryFn: () => fetchBuildings(),
-  });
   const save = useServerFn(saveUnit);
 
   const m = useMutation({
@@ -128,23 +123,6 @@ export function UnitFormDialog({
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
             />
-          </div>
-
-          <div>
-            <Label htmlFor="u-building">{t("rental.units.fBuilding")}</Label>
-            <select
-              id="u-building"
-              value={form.building_id ?? ""}
-              onChange={(e) => set("building_id", e.target.value || null)}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            >
-              <option value="">{t("rental.units.noBuilding")}</option>
-              {buildings.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
           </div>
 
           <div>
