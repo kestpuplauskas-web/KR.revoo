@@ -14,6 +14,7 @@ import { getDashboard } from "@/lib/dashboard.functions";
 
 import { useDefaultLanguage } from "@/hooks/useDefaultLanguage";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { AssistantWidget } from "@/components/admin/assistant/AssistantWidget";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
