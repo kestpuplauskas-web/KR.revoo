@@ -76,8 +76,8 @@ async function handlePost(request: Request) {
   const history = (historyRows ?? []).reverse() as { role: "user" | "assistant"; content: string }[];
 
   // Kontekstas
-  const ctx = await import("@/lib/assistant-context.server");
-  const { buildBusinessAnalytics } = await import("@/lib/assistant-analytics.server");
+  const ctx = await import("../../../lib/assistant-context.server");
+  const { buildBusinessAnalytics } = await import("../../../lib/assistant-analytics.server");
   const [settings, propertiesSummary, businessAnalytics] = await Promise.all([
     ctx.loadSettingsForAssistant(supabase),
     ctx.buildPropertiesSummary(supabase, lang),
