@@ -1019,7 +1019,8 @@
       "tenants": "Tenants",
       "inquiries": "Inquiries",
       "issues": "Faults",
-      "charges": "Charges"
+      "charges": "Charges",
+      "calendar": "Calendar"
     },
     "tabs": {
       "overview": "Overview",
@@ -1455,6 +1456,16 @@
       "current": "current",
       "saved": "Tariff added",
       "errExists": "A tariff of this type with the same date already exists."
+    },
+    "calendar": {
+      "noUnits": "No units found",
+      "onlyOccupied": "Only with leases",
+      "openTenant": "Open tenant",
+      "openUnit": "Open unit",
+      "searchPlaceholder": "Search by unit or tenant…",
+      "summary": "{{year}} · {{occupied}} of {{total}} units occupied · leases ending: {{ending}}",
+      "thisYear": "This year",
+      "title": "Lease calendar"
     }
   },
   "public": {
