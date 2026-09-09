@@ -240,6 +240,7 @@ function AdminLayout() {
       <main className="flex-1 overflow-x-hidden px-4 py-4 md:px-6 md:py-6">
         <Outlet />
       </main>
+      <AssistantWidget />
     </div>
   );
 }
