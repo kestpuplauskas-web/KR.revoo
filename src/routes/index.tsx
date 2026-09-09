@@ -1,24 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
+import { HomePage } from "@/pages/public/HomePage";
+import { publicOrgQuery, vacanciesQuery } from "@/lib/public-queries";
+import { pageHead } from "@/lib/seo";
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+export const Route = createFileRoute("/")({
+  head: () =>
+    pageHead({
+      path: "/",
+      title: "Ilgalaikė butų ir kambarių nuoma — laisvi objektai",
+      description:
+        "Laisvi ir netrukus atsilaisvinantys ilgalaikės nuomos butai bei kambariai su tikslia atsilaisvinimo data ir mėnesio nuomos kaina.",
+      locale: "lt",
+    }),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(vacanciesQuery),
+      context.queryClient.ensureQueryData(publicOrgQuery),
+    ]);
+  },
+  component: () => <HomePage locale="lt" />,
+});

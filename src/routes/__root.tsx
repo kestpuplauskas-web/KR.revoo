@@ -4,13 +4,27 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import "@/i18n";
+import { LanguageProvider } from "@/components/LanguageProvider";
+import { Toaster } from "@/components/ui/sonner";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { usePageTracking } from "@/hooks/usePageTracking";
+import { useRememberedLocaleRedirect } from "@/components/site/LanguageSwitcher";
+import { htmlLang, localeFromPath } from "@/lib/locale";
+
+/** Core (administravimo / personalo) maršrutai neturi svetainės antraštės ir poraštės. */
+const CORE_PREFIXES = ["/admin", "/nuomininkas", "/auth", "/reset-password", "/api"];
+
+function isCorePath(pathname: string) {
+  return CORE_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
 
 function NotFoundComponent() {
   return (
@@ -37,9 +51,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,21 +88,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { name: "robots", content: "noindex, nofollow" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico?v=2", sizes: "any" },
+      { rel: "icon", type: "image/png", sizes: "64x64", href: "/favicon.png?v=2" },
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon-512.png?v=2" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=2" },
+      { rel: "manifest", href: "/manifest.webmanifest?v=2" },
+
+
     ],
   }),
   shellComponent: RootShell,
@@ -100,9 +112,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
+function RootShell({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const locale = localeFromPath(pathname);
   return (
-    <html lang="en">
+    <html lang={htmlLang[locale]}>
       <head>
         <HeadContent />
       </head>
@@ -116,11 +130,32 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  usePageTracking();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  useRememberedLocaleRedirect();
+
+  if (isCorePath(pathname)) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <Outlet />
+          <Toaster />
+        </LanguageProvider>
+      </QueryClientProvider>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="site-theme min-h-screen bg-background text-foreground">
+        <SiteHeader />
+        <main>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+        <SiteFooter />
+      </div>
+      <Toaster />
     </QueryClientProvider>
   );
 }
