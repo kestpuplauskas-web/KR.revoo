@@ -237,7 +237,6 @@ function UnitsPage() {
           <thead className="bg-muted">
             <tr className="text-left">
               <th className="p-2">{t("rental.units.colUnit")}</th>
-              <th className="p-2">{t("rental.units.colBuilding")}</th>
               <th className="p-2">{t("rental.units.colRooms")}</th>
               <th className="p-2">{t("rental.units.colRent")}</th>
               <th className="p-2">{t("rental.units.colStatus")}</th>
@@ -248,14 +247,14 @@ function UnitsPage() {
           <tbody>
             {isLoading && (
               <tr>
-                <td className="p-3 text-muted-foreground" colSpan={7}>
+                <td className="p-3 text-muted-foreground" colSpan={6}>
                   {t("common.loading")}
                 </td>
               </tr>
             )}
             {!isLoading && rows.length === 0 && (
               <tr>
-                <td className="p-3 text-muted-foreground" colSpan={7}>
+                <td className="p-3 text-muted-foreground" colSpan={6}>
                   {t("rental.units.empty")}
                 </td>
               </tr>
