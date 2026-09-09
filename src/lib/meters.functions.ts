@@ -98,18 +98,42 @@ export const addReading = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireManager(context);
     const period = `${data.period.slice(0, 7)}-01`;
-    const { error } = await context.supabase.from("meter_readings").insert({
-      meter_id: data.meter_id,
-      period,
+    const row = {
       value: data.value,
       note: data.note,
-      status: "approved",
+      status: "approved" as const,
+      needs_review: false,
       submitted_by: context.userId,
+      submitted_at: new Date().toISOString(),
       reviewed_by: context.userId,
       reviewed_at: new Date().toISOString(),
-    });
+    };
+
+    // One accepted reading per (meter, period): correct the existing row instead
+    // of inserting a duplicate.
+    const { data: existing, error: findError } = await context.supabase
+      .from("meter_readings")
+      .select("id")
+      .eq("meter_id", data.meter_id)
+      .eq("period", period)
+      .neq("status", "rejected")
+      .maybeSingle();
+    if (findError) throw new Error(findError.message);
+
+    if (existing) {
+      const { error } = await context.supabase
+        .from("meter_readings")
+        .update(row)
+        .eq("id", existing.id);
+      if (error) throw new Error(error.message);
+      return { ok: true, updated: true };
+    }
+
+    const { error } = await context.supabase
+      .from("meter_readings")
+      .insert({ meter_id: data.meter_id, period, ...row });
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, updated: false };
   });
 
 export const reviewReading = createServerFn({ method: "POST" })
