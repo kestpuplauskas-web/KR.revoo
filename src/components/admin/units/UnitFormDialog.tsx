@@ -84,11 +84,6 @@ export function UnitFormDialog({
   const [form, setForm] = useState<UnitDraft>(initial);
   useEffect(() => setForm(initial), [initial, open]);
 
-  const fetchBuildings = useServerFn(listBuildings);
-  const { data: buildings = [] } = useQuery({
-    queryKey: ["buildings"],
-    queryFn: () => fetchBuildings(),
-  });
   const save = useServerFn(saveUnit);
 
   const m = useMutation({
