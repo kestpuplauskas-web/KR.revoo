@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { resolveFromAddress } from "@/lib/email-from";
+import { getResendApiKey } from "@/lib/resend-key";
 
 async function assertOwner(ctx: { supabase: any; userId: string }) {
   const { data, error } = await ctx.supabase.rpc("has_role", {
@@ -17,8 +18,9 @@ export const getEmailDiagnostics = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertOwner({ supabase: context.supabase, userId: context.userId });
     const from = resolveFromAddress();
+    const apiKey = getResendApiKey();
     return {
-      hasResendKey: Boolean(process.env["RESEND_API_KEY"]),
+      hasResendKey: Boolean(apiKey),
       hasLovableKey: Boolean(process.env["LOVABLE_API_KEY"]),
       from,
       usesFallbackFrom: !process.env["RESEND_FROM_EMAIL"],
@@ -34,7 +36,7 @@ export const sendResendTestEmail = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertOwner({ supabase: context.supabase, userId: context.userId });
 
-    const apiKey = process.env["RESEND_API_KEY"];
+    const apiKey = getResendApiKey();
     const lovableKey = process.env["LOVABLE_API_KEY"];
     const from = resolveFromAddress();
 
@@ -43,7 +45,7 @@ export const sendResendTestEmail = createServerFn({ method: "POST" })
         ok: false as const,
         from,
         status: 0,
-        detail: `Trūksta raktų: ${[!apiKey && "RESEND_API_KEY", !lovableKey && "LOVABLE_API_KEY"].filter(Boolean).join(", ")}`,
+        detail: `Trūksta raktų: ${[!apiKey && "RESEND_API_KEY / RESEND_API_KEY_1", !lovableKey && "LOVABLE_API_KEY"].filter(Boolean).join(", ")}`,
       };
     }
 

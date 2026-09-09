@@ -5,6 +5,7 @@
 
 import { DEFAULT_PROPERTY_SETTINGS, SETTINGS_COLUMN_MAP, type PropertySettings } from "./property-settings";
 import { resolveFromAddress } from "./email-from";
+import { getResendApiKey } from "./resend-key";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
@@ -35,7 +36,7 @@ ${styled}
 }
 
 export async function sendEmail(opts: { to: string; subject: string; html: string; replyTo?: string }) {
-  const apiKey = process.env["RESEND_API_KEY"];
+  const apiKey = getResendApiKey();
   if (!apiKey) throw new Error("RESEND_API_KEY nesukonfigūruotas.");
   const lovableKey = process.env["LOVABLE_API_KEY"];
   if (!lovableKey) throw new Error("LOVABLE_API_KEY nesukonfigūruotas.");
