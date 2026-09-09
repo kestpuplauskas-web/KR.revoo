@@ -5,6 +5,7 @@
 
 import { DEFAULT_PROPERTY_SETTINGS, SETTINGS_COLUMN_MAP, type PropertySettings } from "./property-settings";
 import { resolveFromAddress } from "./email-from";
+import { getResendApiKey } from "./resend-key";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
