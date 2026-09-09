@@ -24,6 +24,7 @@ import { Route as EnIndexRouteImport } from './routes/en/index'
 import { Route as EnKontaktaiRouteImport } from './routes/en/kontaktai'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
+import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
 import { Route as AuthenticatedAdminChargesRouteImport } from './routes/_authenticated/admin.charges'
 import { Route as AuthenticatedAdminContentRouteImport } from './routes/_authenticated/admin.content'
 import { Route as AuthenticatedAdminContractsRouteImport } from './routes/_authenticated/admin.contracts'
@@ -125,6 +126,12 @@ const AuthenticatedAdminAnalyticsRoute =
   AuthenticatedAdminAnalyticsRouteImport.update({
     id: '/analytics',
     path: '/analytics',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCalendarRoute =
+  AuthenticatedAdminCalendarRouteImport.update({
+    id: '/calendar',
+    path: '/calendar',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminChargesRoute =
@@ -291,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/butai/': typeof ButaiIndexRoute
   '/en/': typeof EnIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/charges': typeof AuthenticatedAdminChargesRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
@@ -330,6 +338,7 @@ export interface FileRoutesByTo {
   '/butai': typeof ButaiIndexRoute
   '/en': typeof EnIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/charges': typeof AuthenticatedAdminChargesRoute
   '/admin/content': typeof AuthenticatedAdminContentRoute
   '/admin/contracts': typeof AuthenticatedAdminContractsRoute
@@ -374,6 +383,7 @@ export interface FileRoutesById {
   '/butai/': typeof ButaiIndexRoute
   '/en/': typeof EnIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/_authenticated/admin/charges': typeof AuthenticatedAdminChargesRoute
   '/_authenticated/admin/content': typeof AuthenticatedAdminContentRoute
   '/_authenticated/admin/contracts': typeof AuthenticatedAdminContractsRoute
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/butai/'
     | '/en/'
     | '/admin/analytics'
+    | '/admin/calendar'
     | '/admin/charges'
     | '/admin/content'
     | '/admin/contracts'
@@ -457,6 +468,7 @@ export interface FileRouteTypes {
     | '/butai'
     | '/en'
     | '/admin/analytics'
+    | '/admin/calendar'
     | '/admin/charges'
     | '/admin/content'
     | '/admin/contracts'
@@ -500,6 +512,7 @@ export interface FileRouteTypes {
     | '/butai/'
     | '/en/'
     | '/_authenticated/admin/analytics'
+    | '/_authenticated/admin/calendar'
     | '/_authenticated/admin/charges'
     | '/_authenticated/admin/content'
     | '/_authenticated/admin/contracts'
@@ -651,6 +664,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/admin/analytics'
       preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/calendar': {
+      id: '/_authenticated/admin/calendar'
+      path: '/calendar'
+      fullPath: '/admin/calendar'
+      preLoaderRoute: typeof AuthenticatedAdminCalendarRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/charges': {
@@ -840,6 +860,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
+  AuthenticatedAdminCalendarRoute: typeof AuthenticatedAdminCalendarRoute
   AuthenticatedAdminChargesRoute: typeof AuthenticatedAdminChargesRoute
   AuthenticatedAdminContentRoute: typeof AuthenticatedAdminContentRoute
   AuthenticatedAdminContractsRoute: typeof AuthenticatedAdminContractsRoute
@@ -858,6 +879,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
+  AuthenticatedAdminCalendarRoute: AuthenticatedAdminCalendarRoute,
   AuthenticatedAdminChargesRoute: AuthenticatedAdminChargesRoute,
   AuthenticatedAdminContentRoute: AuthenticatedAdminContentRoute,
   AuthenticatedAdminContractsRoute: AuthenticatedAdminContractsRoute,

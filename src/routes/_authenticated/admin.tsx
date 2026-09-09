@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { BarChart3, Building2, FileEdit, FileText, Globe, Inbox, LayoutDashboard, LogOut, Menu, Receipt,
+import { BarChart3, Building2, CalendarDays, FileEdit, FileText, Globe, Inbox, LayoutDashboard, LogOut, Menu, Receipt,
   Coins, Settings2, UserCog, Users, Wallet, Wrench } from "lucide-react";
 import { getMyRole } from "@/lib/properties.functions";
 import { BrandMark } from "@/components/BrandMark";
@@ -85,6 +85,7 @@ function AdminLayout() {
       label: t("nav.group.portfolio"),
       items: [
         { to: "/admin/units", label: t("rental.nav.units"), icon: Building2 },
+        { to: "/admin/calendar", label: t("rental.nav.calendar"), icon: CalendarDays },
         { to: "/admin/tenants", label: t("rental.nav.tenants"), icon: Users },
         { to: "/admin/contracts", label: t("nav.contracts"), icon: FileText },
         // Faults concern the units themselves.

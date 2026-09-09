@@ -1019,7 +1019,8 @@
       "tenants": "Nuomininkai",
       "inquiries": "Užklausos",
       "issues": "Gedimai",
-      "charges": "Mokesčiai"
+      "charges": "Mokesčiai",
+      "calendar": "Kalendorius"
     },
     "tabs": {
       "overview": "Apžvalga",
@@ -1455,6 +1456,16 @@
       "current": "galioja",
       "saved": "Tarifas pridėtas",
       "errExists": "Toks tarifas su ta pačia data jau yra."
+    },
+    "calendar": {
+      "noUnits": "Butų nerasta",
+      "onlyOccupied": "Tik su sutartimis",
+      "openTenant": "Atidaryti nuomininką",
+      "openUnit": "Atidaryti butą",
+      "searchPlaceholder": "Ieškoti pagal butą arba nuomininką…",
+      "summary": "{{year}} m. · užimta {{occupied}} iš {{total}} butų · sutarčių baigiasi: {{ending}}",
+      "thisYear": "Šie metai",
+      "title": "Nuomos kalendorius"
     }
   },
   "public": {
