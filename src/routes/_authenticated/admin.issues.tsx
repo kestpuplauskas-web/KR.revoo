@@ -208,11 +208,17 @@ function IssueDialog({
   const update = useServerFn(updateIssue);
   const sign = useServerFn(signIssuePhoto);
   const [photoUrls, setPhotoUrls] = useState<{ path: string; url: string }[]>([]);
+  const [costDraft, setCostDraft] = useState("");
+
+  useEffect(() => {
+    setCostDraft(issue?.cost != null ? String(issue.cost) : "");
+  }, [issue]);
 
   const patch = useMutation({
-    mutationFn: (v: { id: string; status: IssueStatus }) => update({ data: v }),
+    mutationFn: (v: { id: string; status?: IssueStatus; priority?: string; cost?: number | null }) =>
+      update({ data: v }),
     onSuccess: () => {
-      toast.success(t("rental.issues.created"));
+      toast.success(t("rental.issues.updated"));
       queryClient.invalidateQueries({ queryKey: ["admin-issues"] });
     },
     onError: (e: Error) => toast.error(e.message),
