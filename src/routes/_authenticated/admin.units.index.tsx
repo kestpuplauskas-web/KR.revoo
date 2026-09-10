@@ -379,7 +379,7 @@ function UnitsPage() {
                 if (toDelete) deleteMutation.mutate(toDelete.id);
               }}
             >
-              {t("rental.units.delete")}
+              Ištrinti
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
