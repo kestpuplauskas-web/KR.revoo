@@ -86,6 +86,19 @@ export const signIssuePhoto = createServerFn({ method: "POST" })
   });
 
 export const listIssueComments = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ issue_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await requireManager(context);
+    const { data: rows, error } = await context.supabase
+      .from("issue_comments")
+      .select("id, issue_id, author_role, body, is_internal, created_at")
+      .eq("issue_id", data.issue_id)
+      .order("created_at");
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
 
 export const addIssueComment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
