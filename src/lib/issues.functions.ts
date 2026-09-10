@@ -73,6 +73,18 @@ export const updateIssue = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const signIssuePhoto = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ path: z.string().min(1) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await requireManager(context);
+    const { data: signed, error } = await context.supabase.storage
+      .from("issue-photos")
+      .createSignedUrl(data.path, 300);
+    if (error || !signed) throw new Error(error?.message ?? "sign failed");
+    return { url: signed.signedUrl as string };
+  });
+
 export const listIssueComments = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ issue_id: z.string().uuid() }).parse(d))
@@ -86,6 +98,7 @@ export const listIssueComments = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return rows ?? [];
   });
+
 
 export const addIssueComment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

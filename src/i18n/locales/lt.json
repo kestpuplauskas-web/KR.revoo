@@ -1318,6 +1318,10 @@
       "anyStatus": "Bet kuri būsena",
       "anyPriority": "Bet kuris prioritetas",
       "age": "Amžius",
+      "createdAt": "Sukurta",
+      "reportedBy": "Pranešė",
+      "photos": "Nuotraukos",
+      "noPhotos": "Nuotraukų nėra.",
       "days": "{{count}} d."
     },
     "dashboard": {

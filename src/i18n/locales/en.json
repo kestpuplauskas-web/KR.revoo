@@ -1318,6 +1318,10 @@
       "anyStatus": "Any status",
       "anyPriority": "Any priority",
       "age": "Age",
+      "createdAt": "Created",
+      "reportedBy": "Reported by",
+      "photos": "Photos",
+      "noPhotos": "No photos.",
       "days": "{{count}} d"
     },
     "dashboard": {

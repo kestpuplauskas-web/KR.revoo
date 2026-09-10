@@ -1,12 +1,20 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { listIssues } from "@/lib/issues.functions";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { listIssues, signIssuePhoto, updateIssue } from "@/lib/issues.functions";
 import { listUnits } from "@/lib/units.functions";
 import { ISSUE_PRIORITIES, ISSUE_STATUSES, daysBetween, todayIso } from "@/lib/rental";
+import type { IssueStatus } from "@/lib/rental";
 
 const OPEN_STATUSES = ["new", "acknowledged", "in_progress", "waiting"];
 const PRIORITY_RANK: Record<string, number> = { urgent: 0, high: 1, normal: 2, low: 3 };
@@ -37,6 +45,8 @@ const priorityClass: Record<string, string> = {
   low: "bg-muted text-muted-foreground",
 };
 
+type IssueRow = Awaited<ReturnType<typeof listIssues>>[number];
+
 function IssuesPage() {
   const { t } = useTranslation();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -44,6 +54,7 @@ function IssuesPage() {
   const status = search.status ?? "open";
   const fetchIssues = useServerFn(listIssues);
   const fetchUnits = useServerFn(listUnits);
+  const [selected, setSelected] = useState<IssueRow | null>(null);
 
   const { data: issues = [], isLoading } = useQuery({
     queryKey: ["admin-issues"],
@@ -131,20 +142,21 @@ function IssuesPage() {
               <th className="p-2">{t("rental.units.colUnit")}</th>
               <th className="p-2">{t("rental.issues.category")}</th>
               <th className="p-2">{t("rental.issues.status")}</th>
+              <th className="p-2">{t("rental.issuesList.createdAt")}</th>
               <th className="p-2">{t("rental.issuesList.age")}</th>
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td className="p-3 text-muted-foreground" colSpan={6}>
+                <td className="p-3 text-muted-foreground" colSpan={7}>
                   {t("common.loading")}
                 </td>
               </tr>
             )}
             {!isLoading && rows.length === 0 && (
               <tr>
-                <td className="p-3 text-muted-foreground" colSpan={6}>
+                <td className="p-3 text-muted-foreground" colSpan={7}>
                   {t("rental.issues.empty")}
                 </td>
               </tr>
@@ -157,25 +169,162 @@ function IssuesPage() {
                   </span>
                 </td>
                 <td className="p-2">
-                  <Link
-                    to="/admin/units/$id"
-                    params={{ id: i.unit_id }}
-                    search={{ tab: "issues" }}
-                    className="font-medium text-primary hover:underline"
+                  <button
+                    type="button"
+                    onClick={() => setSelected(i)}
+                    className="text-left font-medium text-primary hover:underline"
                   >
                     {i.title}
-                  </Link>
+                  </button>
                   <div className="text-xs text-muted-foreground">{i.reporter_name}</div>
                 </td>
                 <td className="p-2">{unitName.get(i.unit_id) ?? "—"}</td>
                 <td className="p-2">{t(`rental.issueCategory.${i.category}`)}</td>
                 <td className="p-2">{t(`rental.issueStatus.${i.status}`)}</td>
+                <td className="p-2 tabular-nums">{new Date(i.created_at).toLocaleDateString()}</td>
                 <td className="p-2 tabular-nums">{t("rental.issuesList.days", { count: i.age })}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <IssueDialog issue={selected} unitName={selected ? unitName.get(selected.unit_id) : undefined} onClose={() => setSelected(null)} />
     </div>
+  );
+}
+
+function IssueDialog({
+  issue,
+  unitName,
+  onClose,
+}: {
+  issue: IssueRow | null;
+  unitName?: string;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const update = useServerFn(updateIssue);
+  const sign = useServerFn(signIssuePhoto);
+  const [photoUrls, setPhotoUrls] = useState<{ path: string; url: string }[]>([]);
+
+  const patch = useMutation({
+    mutationFn: (v: { id: string; status: IssueStatus }) => update({ data: v }),
+    onSuccess: () => {
+      toast.success(t("rental.issues.created"));
+      queryClient.invalidateQueries({ queryKey: ["admin-issues"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const photos = useMemo(
+    () => (Array.isArray(issue?.photo_paths) ? (issue.photo_paths as string[]) : []),
+    [issue],
+  );
+
+  useEffect(() => {
+    setPhotoUrls([]);
+    if (!issue || photos.length === 0) return;
+    let cancelled = false;
+    Promise.all(
+      photos.map(async (path) => {
+        const { url } = await sign({ data: { path } });
+        return { path, url };
+      }),
+    )
+      .then((urls) => {
+        if (!cancelled) setPhotoUrls(urls);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [issue, photos, sign]);
+
+  return (
+    <Dialog open={!!issue} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl">
+        {issue && (
+          <>
+            <DialogHeader>
+              <DialogTitle>{issue.title}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`inline-block rounded px-2 py-0.5 text-xs ${priorityClass[issue.priority] ?? ""}`}>
+                  {t(`rental.issuePriority.${issue.priority}`)}
+                </span>
+                <span className="rounded bg-muted px-2 py-0.5 text-xs">
+                  {t(`rental.issueCategory.${issue.category}`)}
+                </span>
+                {unitName && <span className="rounded bg-muted px-2 py-0.5 text-xs">{unitName}</span>}
+              </div>
+
+              <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div>
+                  <dt className="text-xs text-muted-foreground">{t("rental.issuesList.reportedBy")}</dt>
+                  <dd>{issue.reporter_name || "—"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">{t("rental.issuesList.createdAt")}</dt>
+                  <dd>{new Date(issue.created_at).toLocaleString()}</dd>
+                </div>
+              </dl>
+
+              {issue.description && (
+                <div>
+                  <p className="text-xs text-muted-foreground">{t("rental.issues.description")}</p>
+                  <p className="mt-1 whitespace-pre-wrap">{issue.description}</p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs text-muted-foreground">{t("rental.issuesList.photos")}</p>
+                {photos.length === 0 ? (
+                  <p className="mt-1 text-muted-foreground">{t("rental.issuesList.noPhotos")}</p>
+                ) : (
+                  <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {photos.map((p) => {
+                      const signed = photoUrls.find((u) => u.path === p)?.url;
+                      return signed ? (
+                        <a key={p} href={signed} target="_blank" rel="noopener noreferrer">
+                          <img
+                            src={signed}
+                            alt={issue.title}
+                            className="h-32 w-full rounded-md border object-cover"
+                          />
+                        </a>
+                      ) : (
+                        <div key={p} className="h-32 animate-pulse rounded-md border bg-muted" />
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs text-muted-foreground" htmlFor="issue-status">
+                  {t("rental.issues.status")}
+                </label>
+                <select
+                  id="issue-status"
+                  value={issue.status}
+                  disabled={patch.isPending}
+                  onChange={(e) => patch.mutate({ id: issue.id, status: e.target.value as IssueStatus })}
+                  className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                >
+                  {ISSUE_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {t(`rental.issueStatus.${s}`)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
