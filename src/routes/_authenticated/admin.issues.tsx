@@ -355,7 +355,7 @@ function IssueDialog({
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground" htmlFor="issue-cost">
-                    {t("rental.issues.costWithVat")}
+                    Preliminari remonto kaina su PVM
                   </label>
                   <input
                     id="issue-cost"
