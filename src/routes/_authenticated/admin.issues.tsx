@@ -215,7 +215,7 @@ function IssueDialog({
   }, [issue]);
 
   const patch = useMutation({
-    mutationFn: (v: { id: string; status?: IssueStatus; priority?: string; cost?: number | null }) =>
+    mutationFn: (v: { id: string; status?: IssueStatus; priority?: IssuePriority; cost?: number | null }) =>
       update({ data: v }),
     onSuccess: () => {
       toast.success(t("rental.issues.updated"));
@@ -309,23 +309,64 @@ function IssueDialog({
                 )}
               </div>
 
-              <div>
-                <label className="text-xs text-muted-foreground" htmlFor="issue-status">
-                  {t("rental.issues.status")}
-                </label>
-                <select
-                  id="issue-status"
-                  value={issue.status}
-                  disabled={patch.isPending}
-                  onChange={(e) => patch.mutate({ id: issue.id, status: e.target.value as IssueStatus })}
-                  className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
-                >
-                  {ISSUE_STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {t(`rental.issueStatus.${s}`)}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="issue-status">
+                    {t("rental.issues.status")}
+                  </label>
+                  <select
+                    id="issue-status"
+                    value={issue.status}
+                    disabled={patch.isPending}
+                    onChange={(e) => patch.mutate({ id: issue.id, status: e.target.value as IssueStatus })}
+                    className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  >
+                    {ISSUE_STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {t(`rental.issueStatus.${s}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="issue-priority">
+                    {t("rental.issues.priority")}
+                  </label>
+                  <select
+                    id="issue-priority"
+                    value={issue.priority}
+                    disabled={patch.isPending}
+                    onChange={(e) => patch.mutate({ id: issue.id, priority: e.target.value as IssuePriority })}
+                    className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  >
+                    {ISSUE_PRIORITIES.map((p) => (
+                      <option key={p} value={p}>
+                        {t(`rental.issuePriority.${p}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="issue-cost">
+                    {t("rental.issues.costWithVat")}
+                  </label>
+                  <input
+                    id="issue-cost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={costDraft}
+                    disabled={patch.isPending}
+                    onChange={(e) => setCostDraft(e.target.value)}
+                    onBlur={() => {
+                      const next = costDraft.trim() === "" ? null : Number(costDraft);
+                      if (Number.isNaN(next as number)) return;
+                      if (next !== (issue.cost ?? null)) patch.mutate({ id: issue.id, cost: next });
+                    }}
+                    className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  />
+                </div>
               </div>
             </div>
           </>
