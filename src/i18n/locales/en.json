@@ -1254,6 +1254,8 @@
       "status": "Status",
       "add": "Report issue",
       "created": "Issue created",
+      "updated": "Changes saved",
+      "costWithVat": "Estimated cost (incl. VAT), €",
       "empty": "No issues.",
       "commentPlaceholder": "Comment…",
       "send": "Send"
