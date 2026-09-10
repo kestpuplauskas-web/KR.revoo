@@ -56,6 +56,13 @@ function IssuesPage() {
   const fetchUnits = useServerFn(listUnits);
   const [selected, setSelected] = useState<IssueRow | null>(null);
 
+  // Keep the open dialog in sync after status/priority/cost updates.
+  useEffect(() => {
+    if (!selected) return;
+    const fresh = issues.find((i) => i.id === selected.id);
+    if (fresh && fresh !== selected) setSelected(fresh);
+  }, [issues, selected]);
+
   const { data: issues = [], isLoading } = useQuery({
     queryKey: ["admin-issues"],
     queryFn: () => fetchIssues({ data: {} }),
