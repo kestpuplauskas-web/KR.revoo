@@ -276,6 +276,13 @@ export const deleteTenant = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireOwner(context);
     const { error } = await context.supabase.from("tenants").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) {
+      // FK violation: leases or other records still reference this tenant.
+      if (error.code === "23503")
+        throw new Error(
+          "Šio nuomininko ištrinti negalima, nes su juo susietos sutartys ar kiti įrašai. Pirmiausia ištrinkite juos.",
+        );
+      throw new Error(error.message);
+    }
     return { ok: true };
   });
