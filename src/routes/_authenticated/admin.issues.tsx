@@ -45,6 +45,8 @@ const priorityClass: Record<string, string> = {
   low: "bg-muted text-muted-foreground",
 };
 
+type IssueRow = Awaited<ReturnType<typeof listIssues>>[number];
+
 function IssuesPage() {
   const { t } = useTranslation();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -52,6 +54,7 @@ function IssuesPage() {
   const status = search.status ?? "open";
   const fetchIssues = useServerFn(listIssues);
   const fetchUnits = useServerFn(listUnits);
+  const [selected, setSelected] = useState<IssueRow | null>(null);
 
   const { data: issues = [], isLoading } = useQuery({
     queryKey: ["admin-issues"],
