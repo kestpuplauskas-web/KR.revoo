@@ -63,6 +63,13 @@ function IssuesPage() {
   const { data: units = [] } = useQuery({ queryKey: ["admin-units"], queryFn: () => fetchUnits() });
   const unitName = useMemo(() => new Map(units.map((u) => [u.id, u.name])), [units]);
 
+  // Keep the open dialog in sync after status/priority/cost updates.
+  useEffect(() => {
+    if (!selected) return;
+    const fresh = issues.find((i) => i.id === selected.id);
+    if (fresh && fresh !== selected) setSelected(fresh);
+  }, [issues, selected]);
+
   const rows = useMemo(() => {
     const today = todayIso();
     return issues
