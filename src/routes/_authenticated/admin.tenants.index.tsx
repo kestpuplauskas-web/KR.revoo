@@ -132,7 +132,7 @@ function TenantsPage() {
               <th className="p-2">{t("rental.tenants.colEmail")}</th>
               <th className="p-2">{t("rental.tenants.colUnit")}</th>
               <th className="p-2">{t("rental.tenants.colLogin")}</th>
-              {canDelete && <th className="p-2">{t("rental.tenants.colActions")}</th>}
+              {canDelete && <th className="p-2">Ištrinti</th>}
             </tr>
           </thead>
           <tbody>
