@@ -1147,7 +1147,12 @@
       },
       "clearView": "Show all",
       "owes": "Owes {{amount}} €",
-      "missingReadings": "Missing readings: {{count}}"
+      "missingReadings": "Missing readings: {{count}}",
+      "delete": "Delete",
+      "deleteTitle": "Delete unit?",
+      "deleteDesc": "Unit “{{name}}” will be permanently deleted.",
+      "deleted": "Unit deleted",
+      "colActions": "Actions"
     },
     "tenants": {
       "title": "Tenants",
@@ -1185,7 +1190,12 @@
       "revoked": "Access revoked",
       "inviteNoEmail": "The tenant has no email — add one first.",
       "inviteEmailClash": "This email is already linked to another tenant.",
-      "inviteNotPrimary": "Portal access is only for the primary tenant on a lease (v1). Create a lease first, then invite."
+      "inviteNotPrimary": "Portal access is only for the primary tenant on a lease (v1). Create a lease first, then invite.",
+      "delete": "Delete",
+      "deleteTitle": "Delete tenant?",
+      "deleteDesc": "Tenant “{{name}}” will be permanently deleted.",
+      "deleted": "Tenant deleted",
+      "colActions": "Actions"
     },
     "lease": {
       "current": "Current lease",
