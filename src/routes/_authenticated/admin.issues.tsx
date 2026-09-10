@@ -14,7 +14,7 @@ import {
 import { listIssues, signIssuePhoto, updateIssue } from "@/lib/issues.functions";
 import { listUnits } from "@/lib/units.functions";
 import { ISSUE_PRIORITIES, ISSUE_STATUSES, daysBetween, todayIso } from "@/lib/rental";
-import type { IssueStatus } from "@/lib/rental";
+import type { IssuePriority, IssueStatus } from "@/lib/rental";
 
 const OPEN_STATUSES = ["new", "acknowledged", "in_progress", "waiting"];
 const PRIORITY_RANK: Record<string, number> = { urgent: 0, high: 1, normal: 2, low: 3 };

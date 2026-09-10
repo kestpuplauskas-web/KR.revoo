@@ -1254,6 +1254,8 @@
       "status": "Būsena",
       "add": "Registruoti gedimą",
       "created": "Gedimas užregistruotas",
+      "updated": "Pakeitimai išsaugoti",
+      "costWithVat": "Preliminari kaina (su PVM), €",
       "empty": "Gedimų nėra.",
       "commentPlaceholder": "Komentaras…",
       "send": "Siųsti"
