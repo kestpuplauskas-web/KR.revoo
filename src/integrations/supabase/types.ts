@@ -498,13 +498,6 @@ export type Database = {
             foreignKeyName: "documents_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "documents_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "unit_availability"
             referencedColumns: ["unit_id"]
           },
@@ -549,13 +542,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "expenses_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "expenses_unit_id_fkey"
             columns: ["unit_id"]
@@ -765,13 +751,6 @@ export type Database = {
             foreignKeyName: "issues_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "unit_availability"
             referencedColumns: ["unit_id"]
           },
@@ -912,13 +891,6 @@ export type Database = {
             foreignKeyName: "leases_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "leases_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "unit_availability"
             referencedColumns: ["unit_id"]
           },
@@ -1052,13 +1024,6 @@ export type Database = {
             columns: ["building_id"]
             isOneToOne: false
             referencedRelation: "buildings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "meters_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "public_vacancies"
             referencedColumns: ["id"]
           },
           {
@@ -1347,13 +1312,6 @@ export type Database = {
             foreignKeyName: "property_investments_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "property_investments_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
             referencedRelation: "unit_availability"
             referencedColumns: ["unit_id"]
           },
@@ -1398,13 +1356,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "property_maintenance_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "property_maintenance_unit_id_fkey"
             columns: ["unit_id"]
@@ -1481,13 +1432,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "unit_availability"
             referencedColumns: ["holding_lease_id"]
-          },
-          {
-            foreignKeyName: "rental_inquiries_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "rental_inquiries_unit_id_fkey"
@@ -1623,13 +1567,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "unit_events_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "public_vacancies"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "unit_events_unit_id_fkey"
             columns: ["unit_id"]
