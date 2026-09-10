@@ -191,7 +191,14 @@ export const deleteUnit = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireOwner(context);
     const { error } = await context.supabase.from("units").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) {
+      // FK violation: leases/meters/issues still point at this unit.
+      if (error.code === "23503")
+        throw new Error(
+          "Šio buto ištrinti negalima, nes su juo susietos sutartys, skaitliukai ar kiti įrašai. Pirmiausia ištrinkite juos.",
+        );
+      throw new Error(error.message);
+    }
     return { ok: true };
   });
 

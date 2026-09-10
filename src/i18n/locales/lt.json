@@ -1147,7 +1147,12 @@
       },
       "clearView": "Rodyti visus",
       "owes": "Skola {{amount}} €",
-      "missingReadings": "Trūksta rodmenų: {{count}}"
+      "missingReadings": "Trūksta rodmenų: {{count}}",
+      "delete": "Ištrinti",
+      "deleteTitle": "Ištrinti butą?",
+      "deleteDesc": "Butas „{{name}}“ bus ištrintas negrįžtamai.",
+      "deleted": "Butas ištrintas",
+      "colActions": "Veiksmai"
     },
     "tenants": {
       "title": "Nuomininkai",
@@ -1185,7 +1190,12 @@
       "revoked": "Prieiga panaikinta",
       "inviteNoEmail": "Nuomininkas neturi el. pašto — pirmiausia jį įrašykite.",
       "inviteEmailClash": "Šis el. paštas jau susietas su kitu nuomininku.",
-      "inviteNotPrimary": "Savitarna prieinama tik pagrindiniam sutarties nuomininkui (v1). Sukurkite sutartį, tada kvieskite."
+      "inviteNotPrimary": "Savitarna prieinama tik pagrindiniam sutarties nuomininkui (v1). Sukurkite sutartį, tada kvieskite.",
+      "delete": "Ištrinti",
+      "deleteTitle": "Ištrinti nuomininką?",
+      "deleteDesc": "Nuomininkas „{{name}}“ bus ištrintas negrįžtamai.",
+      "deleted": "Nuomininkas ištrintas",
+      "colActions": "Veiksmai"
     },
     "lease": {
       "current": "Galiojanti sutartis",

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { listTenants, saveTenant } from "@/lib/tenants.functions";
+import { deleteTenant, listTenants, saveTenant } from "@/lib/tenants.functions";
+import { getMyRole } from "@/lib/properties.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/tenants/")({
   component: TenantsPage,
@@ -35,6 +46,11 @@ function TenantsPage() {
   const { t } = useTranslation();
   const fetchTenants = useServerFn(listTenants);
   const save = useServerFn(saveTenant);
+  const removeTenant = useServerFn(deleteTenant);
+  const fetchRole = useServerFn(getMyRole);
+  const { data: myRole } = useQuery({ queryKey: ["my-role"], queryFn: () => fetchRole() });
+  const canDelete = myRole?.isOwner === true;
+  const [toDelete, setToDelete] = useState<{ id: string; name: string } | null>(null);
   const { data: tenants = [], refetch, isLoading } = useQuery({
     queryKey: ["tenants"],
     queryFn: () => fetchTenants(),
@@ -57,6 +73,16 @@ function TenantsPage() {
       toast.success(t("rental.tenants.saved"));
       setOpen(false);
       setForm({ first_name: "", last_name: "", phone: "", email: "", notes: "", is_active: true });
+      refetch();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => removeTenant({ data: { id } }),
+    onSuccess: () => {
+      toast.success(t("rental.tenants.deleted"));
+      setToDelete(null);
       refetch();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -106,6 +132,7 @@ function TenantsPage() {
               <th className="p-2">{t("rental.tenants.colEmail")}</th>
               <th className="p-2">{t("rental.tenants.colUnit")}</th>
               <th className="p-2">{t("rental.tenants.colLogin")}</th>
+              {canDelete && <th className="p-2">{t("rental.tenants.colActions")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -148,11 +175,48 @@ function TenantsPage() {
                 <td className="p-2">
                   {x.has_login ? t("rental.tenants.hasLogin") : t("rental.tenants.noLogin")}
                 </td>
+                {canDelete && (
+                  <td className="p-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={t("rental.tenants.delete")}
+                      onClick={() =>
+                        setToDelete({ id: x.id, name: `${x.first_name} ${x.last_name}` })
+                      }
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <AlertDialog open={toDelete !== null} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("rental.tenants.deleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("rental.tenants.deleteDesc", { name: toDelete?.name ?? "" })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteMutation.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (toDelete) deleteMutation.mutate(toDelete.id);
+              }}
+            >
+              {t("rental.tenants.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
