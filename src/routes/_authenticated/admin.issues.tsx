@@ -14,7 +14,7 @@ import {
 import { listIssues, signIssuePhoto, updateIssue } from "@/lib/issues.functions";
 import { listUnits } from "@/lib/units.functions";
 import { ISSUE_PRIORITIES, ISSUE_STATUSES, daysBetween, todayIso } from "@/lib/rental";
-import type { IssueStatus } from "@/lib/rental";
+import type { IssuePriority, IssueStatus } from "@/lib/rental";
 
 const OPEN_STATUSES = ["new", "acknowledged", "in_progress", "waiting"];
 const PRIORITY_RANK: Record<string, number> = { urgent: 0, high: 1, normal: 2, low: 3 };
@@ -62,6 +62,13 @@ function IssuesPage() {
   });
   const { data: units = [] } = useQuery({ queryKey: ["admin-units"], queryFn: () => fetchUnits() });
   const unitName = useMemo(() => new Map(units.map((u) => [u.id, u.name])), [units]);
+
+  // Keep the open dialog in sync after status/priority/cost updates.
+  useEffect(() => {
+    if (!selected) return;
+    const fresh = issues.find((i) => i.id === selected.id);
+    if (fresh && fresh !== selected) setSelected(fresh);
+  }, [issues, selected]);
 
   const rows = useMemo(() => {
     const today = todayIso();
@@ -208,11 +215,17 @@ function IssueDialog({
   const update = useServerFn(updateIssue);
   const sign = useServerFn(signIssuePhoto);
   const [photoUrls, setPhotoUrls] = useState<{ path: string; url: string }[]>([]);
+  const [costDraft, setCostDraft] = useState("");
+
+  useEffect(() => {
+    setCostDraft(issue?.cost != null ? String(issue.cost) : "");
+  }, [issue]);
 
   const patch = useMutation({
-    mutationFn: (v: { id: string; status: IssueStatus }) => update({ data: v }),
+    mutationFn: (v: { id: string; status?: IssueStatus; priority?: IssuePriority; cost?: number | null }) =>
+      update({ data: v }),
     onSuccess: () => {
-      toast.success(t("rental.issues.created"));
+      toast.success(t("rental.issues.updated"));
       queryClient.invalidateQueries({ queryKey: ["admin-issues"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -303,23 +316,64 @@ function IssueDialog({
                 )}
               </div>
 
-              <div>
-                <label className="text-xs text-muted-foreground" htmlFor="issue-status">
-                  {t("rental.issues.status")}
-                </label>
-                <select
-                  id="issue-status"
-                  value={issue.status}
-                  disabled={patch.isPending}
-                  onChange={(e) => patch.mutate({ id: issue.id, status: e.target.value as IssueStatus })}
-                  className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
-                >
-                  {ISSUE_STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {t(`rental.issueStatus.${s}`)}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="issue-status">
+                    {t("rental.issues.status")}
+                  </label>
+                  <select
+                    id="issue-status"
+                    value={issue.status}
+                    disabled={patch.isPending}
+                    onChange={(e) => patch.mutate({ id: issue.id, status: e.target.value as IssueStatus })}
+                    className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  >
+                    {ISSUE_STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {t(`rental.issueStatus.${s}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="issue-priority">
+                    {t("rental.issues.priority")}
+                  </label>
+                  <select
+                    id="issue-priority"
+                    value={issue.priority}
+                    disabled={patch.isPending}
+                    onChange={(e) => patch.mutate({ id: issue.id, priority: e.target.value as IssuePriority })}
+                    className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  >
+                    {ISSUE_PRIORITIES.map((p) => (
+                      <option key={p} value={p}>
+                        {t(`rental.issuePriority.${p}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="issue-cost">
+                    {t("rental.issues.costWithVat")}
+                  </label>
+                  <input
+                    id="issue-cost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={costDraft}
+                    disabled={patch.isPending}
+                    onChange={(e) => setCostDraft(e.target.value)}
+                    onBlur={() => {
+                      const next = costDraft.trim() === "" ? null : Number(costDraft);
+                      if (Number.isNaN(next as number)) return;
+                      if (next !== (issue.cost ?? null)) patch.mutate({ id: issue.id, cost: next });
+                    }}
+                    className="mt-1 h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  />
+                </div>
               </div>
             </div>
           </>
